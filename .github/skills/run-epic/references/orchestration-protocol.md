@@ -2,7 +2,7 @@
 
 Step-by-step algorithm for phase-based local epic execution in GitHub Copilot CLI.
 
-The main Copilot CLI agent is the orchestrator. It may execute work directly, delegate bounded work to subagents or custom agents, and use `/fleet` for parallel-safe phases. The orchestrator is the **single writer** to the epic's `status.log` — sub-agents never write to it directly.
+The main Copilot CLI agent is the orchestrator. It may execute work directly, delegate bounded work to background sub-agents via the `task` tool (`mode: "background"`), or delegate to custom agents when appropriate. For parallel-safe phases, the orchestrator **must** spawn background sub-agents — it must not collapse to sequential execution. The orchestrator is the **single writer** to the epic's `status.log` — sub-agents never write to it directly.
 
 ## Phase Execution Protocol
 
@@ -24,20 +24,20 @@ Skip any task whose current status in `status.log` is `done`. If an entire phase
 
 For each task in this phase:
 1. Look up the assigned specialization from the phase plan
-2. Determine whether the main agent should:
-   - execute the task directly
-   - delegate it to a specialist custom agent or subagent
-   - include it in a `/fleet` run when the entire window is parallel-safe
-3. Determine isolation:
+2. Determine isolation:
    - If isolation = `worktree`, use the suggested branch and keep integration explicit
    - If isolation = `main`, execute on the current branch
+3. Determine execution mode — **this rule is mandatory, not optional:**
+   - If **any** task in the phase has `worktree_mode: parallel` in its plan frontmatter, OR the phase mode is `Parallel`: the orchestrator **must** spawn a background sub-agent for each parallel-safe task via the `task` tool with `mode: "background"` and `agent_type: "general-purpose"` (or a matching specialist agent). Sequential execution is not an acceptable fallback for parallel phases.
+   - If **all** tasks in the phase are sequential: execute tasks directly in the main agent, one at a time.
+   - If only **some** tasks in a phase are parallel-safe: spawn background sub-agents for the parallel-safe subset; execute the remainder directly.
 
 #### 3b. START THE PHASE
 
 Before execution starts:
 1. Mark each task selected for execution as `in progress`
 2. Record which tasks are being handled directly vs delegated
-3. If using `/fleet`, keep the fleet scope limited to the safe parallel window only
+3. Keep the background sub-agent scope limited to the safe parallel window only — do not include sequential tasks in the parallel batch
 
 #### 3c. MONITOR AND INTEGRATE
 
@@ -76,7 +76,7 @@ The flow is always: **open → in_progress → done**
 
 After every append, regenerate the `<!-- STATUS-TABLE-START -->`...`<!-- STATUS-TABLE-END -->` block in `epic-overview.md` from the log. The log is the source of truth; the table is a hint for humans.
 
-**Single-writer rule:** The orchestrator is the only process that ever appends to `status.log`. Sub-agents spawned via `/fleet` report completion textually to the orchestrator, who then writes the transition. This eliminates any append race.
+**Single-writer rule:** The orchestrator is the only process that ever appends to `status.log`. Background sub-agents spawned via the `task` tool report completion textually to the orchestrator, who then writes the transition. This eliminates any append race.
 
 ## Worktree Decision Rules
 
@@ -100,7 +100,7 @@ For each parallel-safe task spawned in a worktree, the orchestrator follows this
    ```bash
    git worktree add ../<epic-name>-<slug> <branch>
    ```
-   Dispatch the sub-agent with the worktree path and the task's spec + plan content via the Delegation Prompt Template below.
+   Dispatch the sub-agent using the `task` tool with `mode: "background"`. Pass the worktree path and the task's spec + plan content via the Delegation Prompt Template below. Do **not** run this work inline or in the main agent — the point of the worktree spawn is parallel execution.
 
 2. **Wait for completion report.** Sub-agent reports done/blocked/failed textually. Sub-agent does NOT touch `status.log`.
 
