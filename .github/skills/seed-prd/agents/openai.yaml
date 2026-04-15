@@ -1,0 +1,4 @@
+interface:
+  display_name: "Seed PRD"
+  short_description: "Turn research and code context into a structured implementation PRD"
+  default_prompt: "Create a structured PRD for this effort and save it to a local docs folder"

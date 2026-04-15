@@ -1,0 +1,4 @@
+interface:
+  display_name: "Run Epic"
+  short_description: "Execute an analyzed local epic phase by phase with Copilot CLI native orchestration"
+  default_prompt: "Execute this analyzed local epic folder and track progress through the phases"

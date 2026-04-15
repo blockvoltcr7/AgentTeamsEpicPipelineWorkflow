@@ -1,0 +1,40 @@
+{
+  "SessionStart": [
+    {
+      "matcher": "*",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh",
+          "timeout": 10
+        }
+      ]
+    }
+  ],
+  "PreToolUse": [
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "You are a file safety validator. Review this file operation:\n\nFile path: $TOOL_INPUT.file_path\nOperation: $TOOL_NAME\n\nCheck for:\n1. Sensitive files (.env, credentials, private keys)\n2. System files (/etc/, /usr/, /sys/)\n3. Path traversal attempts (../ patterns)\n4. Secrets in file content\n\nIf safe, return: {\"hookSpecificOutput\": {\"permissionDecision\": \"allow\"}, \"systemMessage\": \"File operation approved\"}\n\nIf unsafe, return: {\"hookSpecificOutput\": {\"permissionDecision\": \"deny\"}, \"systemMessage\": \"Blocked: [reason]\"}\n\nIf unsure, return: {\"hookSpecificOutput\": {\"permissionDecision\": \"ask\"}, \"systemMessage\": \"Review needed: [concern]\"}"
+        }
+      ]
+    },
+    {
+      "matcher": "Bash",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/pre-commit-check.sh",
+          "timeout": 120
+        },
+        {
+          "type": "command",
+          "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/pre-push-check.sh",
+          "timeout": 300
+        }
+      ]
+    }
+  ]
+}

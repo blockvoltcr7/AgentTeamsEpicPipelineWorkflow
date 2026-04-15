@@ -1,0 +1,4 @@
+interface:
+  display_name: "Finalize Epic"
+  short_description: "Validate a local epic folder and freeze it for execution"
+  default_prompt: "Finalize this local epic folder and prepare it for enrichment"

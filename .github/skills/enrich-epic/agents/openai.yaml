@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enrich Epic"
+  short_description: "Turn local task files into implementation-ready specs using PRD and codebase context"
+  default_prompt: "Enrich the tasks in this local epic folder with concrete implementation details"

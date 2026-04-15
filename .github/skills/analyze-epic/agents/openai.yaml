@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analyze Epic"
+  short_description: "Build dependency phases and parallelization guidance for a local epic"
+  default_prompt: "Analyze this local epic folder and write execution strategy plan files"

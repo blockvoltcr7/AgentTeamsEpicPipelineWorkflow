@@ -1,0 +1,4 @@
+interface:
+  display_name: "Seed Epic"
+  short_description: "Turn a local PRD into reviewed local epic and task markdown files"
+  default_prompt: "Parse this PRD into local epic folders and task markdown files"
