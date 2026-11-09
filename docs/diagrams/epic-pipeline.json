@@ -1,0 +1,152 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "From PRD to epic execution",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": "docs/diagrams/epic-pipeline.html",
+    "repository": {
+      "url": "https://github.com/blockvoltcr7/AgentTeamsEpicPipelineWorkflow.git",
+      "revision": "68f79fa5764f4cdafed945f728fada66ef761f75"
+    }
+  },
+  "lanes": [
+    {
+      "id": "pipeline",
+      "label": "Copilot CLI skills"
+    }
+  ],
+  "mainPath": [
+    "prd",
+    "epic",
+    "freeze",
+    "enrich",
+    "plan",
+    "run"
+  ],
+  "nodes": [
+    {
+      "id": "prd",
+      "lane": "pipeline",
+      "col": 0,
+      "type": "backend",
+      "label": "Seed PRD",
+      "sublabel": "Research and document",
+      "sources": [
+        {
+          "path": ".github/skills/seed-prd/SKILL.md",
+          "line": 17,
+          "end_line": 53
+        }
+      ]
+    },
+    {
+      "id": "epic",
+      "lane": "pipeline",
+      "col": 1,
+      "type": "backend",
+      "label": "Seed epic",
+      "sublabel": "Draft task files",
+      "sources": [
+        {
+          "path": ".github/skills/seed-epic/SKILL.md",
+          "line": 17,
+          "end_line": 25
+        }
+      ]
+    },
+    {
+      "id": "freeze",
+      "lane": "pipeline",
+      "col": 2,
+      "type": "backend",
+      "label": "Finalize",
+      "sublabel": "Validate and log",
+      "sources": [
+        {
+          "path": ".github/skills/finalize-epic/SKILL.md",
+          "line": 6,
+          "end_line": 8
+        }
+      ]
+    },
+    {
+      "id": "enrich",
+      "lane": "pipeline",
+      "col": 3,
+      "type": "backend",
+      "label": "Enrich",
+      "sublabel": "Add code context",
+      "sources": [
+        {
+          "path": ".github/skills/enrich-epic/SKILL.md",
+          "line": 17,
+          "end_line": 31
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "lane": "pipeline",
+      "col": 4,
+      "type": "backend",
+      "label": "Analyze",
+      "sublabel": "Plan dependency phases",
+      "sources": [
+        {
+          "path": ".github/skills/analyze-epic/SKILL.md",
+          "line": 25,
+          "end_line": 45
+        }
+      ]
+    },
+    {
+      "id": "run",
+      "lane": "pipeline",
+      "col": 5,
+      "type": "backend",
+      "label": "Run epic",
+      "sublabel": "Execute phase by phase",
+      "sources": [
+        {
+          "path": ".github/skills/run-epic/SKILL.md",
+          "line": 54,
+          "end_line": 75
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "prd",
+      "to": "epic"
+    },
+    {
+      "from": "epic",
+      "to": "freeze"
+    },
+    {
+      "from": "freeze",
+      "to": "enrich"
+    },
+    {
+      "from": "enrich",
+      "to": "plan"
+    },
+    {
+      "from": "plan",
+      "to": "run"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Scope",
+      "items": [
+        "The tracked skills are instructions for an agent, not a standalone workflow engine.",
+        "Finalization and enrichment prescribe Git checkpoint commits."
+      ]
+    }
+  ]
+}

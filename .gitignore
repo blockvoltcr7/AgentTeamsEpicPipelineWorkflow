@@ -2,3 +2,9 @@
 node_modules/
 tmp/
 *.log
+
+.archify/
+docs/diagrams/*.delivery.json
+docs/diagrams/*.finalize.json
+docs/diagrams/*.finalize-summary.json
+docs/diagrams/*.browser-check.json

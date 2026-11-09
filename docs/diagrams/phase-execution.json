@@ -1,0 +1,152 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Copilot phase execution",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": "docs/diagrams/phase-execution.html",
+    "repository": {
+      "url": "https://github.com/blockvoltcr7/AgentTeamsEpicPipelineWorkflow.git",
+      "revision": "68f79fa5764f4cdafed945f728fada66ef761f75"
+    }
+  },
+  "lanes": [
+    {
+      "id": "pipeline",
+      "label": "Copilot CLI skills"
+    }
+  ],
+  "mainPath": [
+    "plan",
+    "dispatch",
+    "verify",
+    "integrate",
+    "state",
+    "checkpoint"
+  ],
+  "nodes": [
+    {
+      "id": "plan",
+      "lane": "pipeline",
+      "col": 0,
+      "type": "backend",
+      "label": "Read plan",
+      "sublabel": "Group tasks by phase",
+      "sources": [
+        {
+          "path": ".github/skills/run-epic/SKILL.md",
+          "line": 35,
+          "end_line": 61
+        }
+      ]
+    },
+    {
+      "id": "dispatch",
+      "lane": "pipeline",
+      "col": 1,
+      "type": "backend",
+      "label": "Execute work",
+      "sublabel": "Parallel when appropriate",
+      "sources": [
+        {
+          "path": ".github/skills/run-epic/SKILL.md",
+          "line": 63,
+          "end_line": 75
+        }
+      ]
+    },
+    {
+      "id": "verify",
+      "lane": "pipeline",
+      "col": 2,
+      "type": "backend",
+      "label": "Verify",
+      "sublabel": "Inspect acceptance criteria",
+      "sources": [
+        {
+          "path": ".github/skills/run-epic/references/orchestration-protocol.md",
+          "line": 95,
+          "end_line": 109
+        }
+      ]
+    },
+    {
+      "id": "integrate",
+      "lane": "pipeline",
+      "col": 3,
+      "type": "backend",
+      "label": "Integrate",
+      "sublabel": "Merge and clean up",
+      "sources": [
+        {
+          "path": ".github/skills/run-epic/references/orchestration-protocol.md",
+          "line": 107,
+          "end_line": 116
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "lane": "pipeline",
+      "col": 4,
+      "type": "backend",
+      "label": "Record state",
+      "sublabel": "Single writer: status.log",
+      "sources": [
+        {
+          "path": ".github/skills/run-epic/references/orchestration-protocol.md",
+          "line": 64,
+          "end_line": 79
+        }
+      ]
+    },
+    {
+      "id": "checkpoint",
+      "lane": "pipeline",
+      "col": 5,
+      "type": "backend",
+      "label": "Checkpoint",
+      "sublabel": "Commit completed phase",
+      "sources": [
+        {
+          "path": ".github/skills/run-epic/SKILL.md",
+          "line": 99,
+          "end_line": 104
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "plan",
+      "to": "dispatch"
+    },
+    {
+      "from": "dispatch",
+      "to": "verify"
+    },
+    {
+      "from": "verify",
+      "to": "integrate"
+    },
+    {
+      "from": "integrate",
+      "to": "state"
+    },
+    {
+      "from": "state",
+      "to": "checkpoint"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Read before use",
+      "items": [
+        "The entry skill makes delegation optional; its orchestration reference says parallel-safe tasks must use background agents.",
+        "Without plan sidecars the entry skill falls back to sequential execution."
+      ]
+    }
+  ]
+}
